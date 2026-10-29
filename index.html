@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Миний хайртад ❤️</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: linear-gradient(to bottom, #1a0a1a, #4a0e2e);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            color: white;
+            touch-action: none;
+        }
+
+        /* Зураг оруулах товчлуур */
+        #fileInput {
+            margin-bottom: 20px;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px dashed white;
+            cursor: pointer;
+        }
+
+        .photo-frame {
+            width: 280px;
+            height: 380px;
+            border: 10px solid white;
+            border-radius: 20px;
+            box-shadow: 0 0 40px rgba(255, 105, 180, 0.6);
+            background-color: #333;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            animation: pulse 2s infinite;
+        }
+
+        #message {
+            margin-top: 25px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(255, 105, 180, 1);
+            min-height: 50px;
+            max-width: 80%;
+        }
+
+        /* Эффектүүд */
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            z-index: 50;
+            animation: floatUp 2.5s ease-out forwards;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(1) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-100vh) scale(1.5) rotate(360deg); opacity: 0; }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        .instruction {
+            margin-top: 10px;
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+
+    <input type="file" id="fileInput" accept="image/*">
+
+    <div class="photo-frame" id="displayImage">
+        <span id="placeholderText">Зураг сонгоно уу</span>
+    </div>
+
+    <div id="message">Дэлгэцэн дээр дараарай ❤️</div>
+    <div class="instruction">Зургаа оруулаад, дэлгэцэнд хүрээрэй</div>
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const displayImage = document.getElementById('displayImage');
+        const placeholderText = document.getElementById('placeholderText');
+        const msgElement = document.getElementById('message');
+
+        const messages = [
+            "Хоолоо сайн идээрэй 🍲",
+            "Дулаан хувцаслаарай 🧣",
+            "Битгий ядраарай, амраарай 😴",
+            "Чи минь хамгийн хөөрхөн нь ✨",
+            "Өдрийг сайхан өнгөрүүлээрэй ☀️",
+            "Үргэлж инээмсэглэж яваарай 😊",
+            "Хайртай шүү ❤️"
+        ];
+
+        let msgIndex = 0;
+
+        // Зураг уншиж харуулах хэсэг
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    displayImage.style.backgroundImage = `url(${event.target.result})`;
+                    placeholderText.style.display = 'none';
+                    fileInput.style.display = 'none'; // Зураг оруулсны дараа товчлуурыг нууна
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Эффект гаргах функц
+        function createEffect(e) {
+            // Зөвхөн зураг орсон үед эсвэл дэлгэцийн өөр хэсэгт дарахад ажиллана
+            if (e.target.id === 'fileInput') return;
+
+            // Мэдэгдэл солих
+            msgElement.innerText = messages[msgIndex];
+            msgIndex = (msgIndex + 1) % messages.length;
+
+            const x = e.clientX || (e.touches && e.touches[0].clientX);
+            const y = e.clientY || (e.touches && e.touches[0].clientY);
+
+            for (let i = 0; i < 8; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                const types = ['❤️', '❄️', '✨', '💖', '🌸'];
+                particle.innerText = types[Math.floor(Math.random() * types.length)];
+                
+                particle.style.left = (x + (Math.random() * 60 - 30)) + 'px';
+                particle.style.top = (y + (Math.random() * 60 - 30)) + 'px';
+                particle.style.fontSize = (Math.random() * 25 + 15) + 'px';
+                
+                document.body.appendChild(particle);
+
+                setTimeout(() => {
+                    particle.remove();
+                }, 2500);
+            }
+        }
+
+        window.addEventListener('mousedown', createEffect);
+        window.addEventListener('touchstart', (e) => {
+            createEffect(e);
+        }, { passive: false });
+    </script>
+</body>
+</html>
